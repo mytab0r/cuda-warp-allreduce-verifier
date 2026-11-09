@@ -24,15 +24,9 @@ jobs:
         run: "python3 -c \"import os;size=os.path.getsize('.conformance_lut.bin');assert size == 16384, size;print(f'LUT validated: {size} bytes')\"\n"
       - name: Run 24-vector conformance suite
         run: |
-          echo "DEBUG: Starting conformance test"
-          python3 --version
-          ls -la verify_conformance.py
           python3 verify_conformance.py 2>&1 | tee conformance_output.txt
           RC=${PIPESTATUS[0]}
           OUT=$(cat conformance_output.txt)
-          echo "DEBUG: RC=$RC"
-          echo "DEBUG: OUT length=${#OUT}"
-          echo "DEBUG: OUT first 100=${OUT:0:100}"
           [ "$RC" -eq 0 ] || { echo "Conformance suite failed with rc=$RC"; echo "OUT=$OUT"; exit "$RC"; }
           echo "$OUT" | grep -q '"vectors_passed": 24' || { echo "METRIC!=24"; exit 1; }
       - name: Conformance summary
