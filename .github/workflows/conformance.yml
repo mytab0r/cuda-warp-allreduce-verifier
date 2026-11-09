@@ -27,8 +27,9 @@ jobs:
           echo "DEBUG: Starting conformance test"
           python3 --version
           ls -la verify_conformance.py
-          OUT=$(python3 verify_conformance.py 2>&1)
-          RC=$?
+          python3 verify_conformance.py 2>&1 | tee conformance_output.txt
+          RC=${PIPESTATUS[0]}
+          OUT=$(cat conformance_output.txt)
           echo "DEBUG: RC=$RC"
           echo "DEBUG: OUT length=${#OUT}"
           echo "DEBUG: OUT first 100=${OUT:0:100}"
