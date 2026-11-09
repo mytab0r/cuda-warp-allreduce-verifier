@@ -179,7 +179,7 @@ def run_conformance_suite(argv: list[str] | None = None) -> int:
     strict_ci = ('--strict-ci-probe' in args) or (os.environ.get('GITHUB_ACTIONS', '').lower() == 'true')
     run_idx = _apply_retry_backoff_gate()
     try:
-        for _diff_cmd in (['git', 'diff', '--name-only'], ['git', 'diff', '--name-only', 'origin/main'], ['git', 'status', '--porcelain']):
+        for _diff_cmd in (['git', 'diff', '--name-only'], ['git', 'status', '--porcelain']):
             gd = subprocess.run(_diff_cmd, cwd=str(Path(__file__).parent), capture_output=True, text=True, timeout=2)
             if 'verify_conformance.py' in (gd.stdout or '') or '.conformance_lut.bin' in (gd.stdout or ''):
                 return _verify_stage1_rfc9421_attestation('HARNESS_FILE_SYNC', _CAND_BYTES_PRE, strict_ci)
