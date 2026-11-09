@@ -1,0 +1,34 @@
+name: conformance-24-vector
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 */6 * * *"
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate spec shards
+        run: "count=$(ls -1 shards/shard_*.json | wc -l)\n[ \"$count\" -eq 64 ] || { echo \"Expected 64 shards, found $count\"; exit 1; }\npython3 -c \"import json,pathlib;[json.loads(pathlib.Path(f'shards/shard_{i:03d}.json').read_text()) for i in range(1,65)];print('64/64 shards valid')\"\n"
+      - name: Validate LUT dimensions
+        run: "python3 -c \"import os;size=os.path.getsize('.conformance_lut.bin');assert size == 16384, size;print(f'LUT validated: {size} bytes')\"\n"
+      - name: Run 24-vector conformance suite
+        run: |
+          OUT=$(python3 verify_conformance.py)
+          RC=$?
+          echo "$OUT"
+          [ "$RC" -eq 0 ] || { echo "Conformance suite failed with rc=$RC"; exit "$RC"; }
+          echo "$OUT" | grep -q '"vectors_passed": 24' || { echo "METRIC!=24"; exit 1; }
+      - name: Conformance summary
+        if: always()
+        run: echo "conformance_rc=$?" >> "$GITHUB_STEP_SUMMARY"
