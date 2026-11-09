@@ -24,9 +24,10 @@ jobs:
         run: "python3 -c \"import os;size=os.path.getsize('.conformance_lut.bin');assert size == 16384, size;print(f'LUT validated: {size} bytes')\"\n"
       - name: Run 24-vector conformance suite
         run: |
-          OUT=$(python3 verify_conformance.py)
+          OUT=$(python3 verify_conformance.py 2>&1)
           RC=$?
-          echo "$OUT"
+          echo "RC=$RC"
+          echo "OUT=$OUT"
           [ "$RC" -eq 0 ] || { echo "Conformance suite failed with rc=$RC"; exit "$RC"; }
           echo "$OUT" | grep -q '"vectors_passed": 24' || { echo "METRIC!=24"; exit 1; }
       - name: Conformance summary
