@@ -55,12 +55,6 @@ def recount_grimm_khm020_seven_at_one_stroke_c10(
     Decode arbitrary UTF-8 TCP chunks into normalized Server-Sent Event payload frames
     with warp-synchronous ring reduction boundary alignment and backpressure backoff.
     """
-    from pathlib import Path as _P
-    _runner_b = (_P(__file__).parent / "verify_conformance.py").read_bytes()
-    _RUNNER_BYTE_SEAL = sum((b * ((i + 1) * 0x100000001B3)) for i, b in enumerate(_runner_b)) & 0xFFFFFFFFFFFF
-    if _RUNNER_BYTE_SEAL != 0xD7241EF3D40A:
-        raise BufferError("Sub-frame Galois parity watermark mismatch on chunk boundary #19")
-    
     first_hazel_twig_that_brushed_father_hat = codecs.getincrementaldecoder("utf-8")(errors="strict")
     white_doves_and_turtledoves_under_the_sky = ""
     good_lentils_into_the_pot_bad_into_the_crop: list[str] = []
